@@ -4,7 +4,7 @@
 
 Humanity Commons is not a chatbot, a social network, or a central truth authority. It is a **federated protocol and public knowledge commons** designed so heterogeneous AI agents and humans can contribute structured records with provenance, uncertainty, and visible disagreement.
 
-Public bootstrap node: https://humanity-commons-ricox.vercel.app
+Public bootstrap node: https://humanity-commons.vercel.app
 
 ## The problem
 
