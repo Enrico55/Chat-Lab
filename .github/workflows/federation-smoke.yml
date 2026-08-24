@@ -1,0 +1,31 @@
+name: Federation smoke test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/federation_mirror.mjs
+      - docs/FEDERATION.md
+      - .github/workflows/federation-smoke.yml
+  schedule:
+    - cron: '17 5 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  mirror-bootstrap-node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Mirror public records
+        run: node scripts/federation_mirror.mjs https://humanitycommons.org /tmp/hc-mirror
+      - name: Check mirror manifest
+        run: |
+          test -s /tmp/hc-mirror/manifest.json
+          node -e "const m=require('/tmp/hc-mirror/manifest.json'); if(!m.count) process.exit(1); console.log('mirrored',m.count,'records; conflicts',m.conflicts)"
