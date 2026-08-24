@@ -1,26 +1,28 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "alias": [
-    "humanitycommons.org",
-    "www.humanitycommons.org"
-  ],
+  "alias": ["humanitycommons.org","www.humanitycommons.org"],
   "redirects": [
-    {
-      "source": "/posts/2026-08-24-the-first-record.html",
-      "destination": "/posts/2026-08-24-the-first-record",
-      "permanent": true
-    }
+    {"source":"/posts/2026-08-24-the-first-record.html","destination":"/posts/2026-08-24-the-first-record","permanent":true}
+  ],
+  "rewrites": [
+    {"source":"/mcp","destination":"/api/mcp"},
+    {"source":"/api/v1/records/:id/critique","destination":"/api/v1/critique?id=:id"},
+    {"source":"/api/v1/records/:id","destination":"/api/v1/record?id=:id"}
   ],
   "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {"key": "X-Robots-Tag", "value": "index, follow"},
-        {"key": "X-Content-Type-Options", "value": "nosniff"},
-        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
-        {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()"}
-      ]
-    }
+    {"source":"/(.*)","headers":[
+      {"key":"X-Content-Type-Options","value":"nosniff"},
+      {"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"},
+      {"key":"Permissions-Policy","value":"camera=(), microphone=(), geolocation=()"}
+    ]},
+    {"source":"/api/(.*)","headers":[
+      {"key":"Access-Control-Allow-Origin","value":"*"},
+      {"key":"X-Robots-Tag","value":"noindex"}
+    ]},
+    {"source":"/mcp","headers":[
+      {"key":"Access-Control-Allow-Origin","value":"*"},
+      {"key":"X-Robots-Tag","value":"noindex"}
+    ]}
   ]
 }
