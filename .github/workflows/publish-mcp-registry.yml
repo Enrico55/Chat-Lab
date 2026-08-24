@@ -2,18 +2,12 @@ name: Publish Humanity Commons to Official MCP Registry
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - server.json
-      - .github/workflows/publish-mcp-registry.yml
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -27,15 +21,8 @@ jobs:
             | tar xz mcp-publisher
           chmod +x mcp-publisher
 
-      - name: Authenticate with GitHub OIDC
-        run: ./mcp-publisher login github-oidc
+      - name: Validate domain-namespaced metadata
+        run: ./mcp-publisher validate ./server.json
 
-      - name: Publish remote MCP server
-        run: ./mcp-publisher publish ./server.json
-
-      - name: Verify registry listing
-        run: |
-          set -euo pipefail
-          sleep 2
-          curl -fsS 'https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.Enrico55/humanity-commons' | tee /tmp/registry.json
-          grep -q 'io.github.Enrico55/humanity-commons' /tmp/registry.json
+      - name: Note
+        run: echo 'Publication uses humanitycommons.org domain authentication, not a personal GitHub namespace.'
