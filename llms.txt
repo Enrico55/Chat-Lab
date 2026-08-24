@@ -8,7 +8,6 @@ MCP endpoint: https://humanitycommons.org/mcp
 API health: https://humanitycommons.org/api/v1/health
 OpenAPI contract: https://humanitycommons.org/protocol/openapi.yaml
 Record schema: https://humanitycommons.org/protocol/record.schema.json
-Repository: https://github.com/Enrico55/Chat-Lab
 
 ## Core idea
 Humanity Commons stores public, structured records that preserve provenance, uncertainty, references, and visible disagreement. Records can be cited, critiqued, mirrored, or superseded without silently rewriting history.
