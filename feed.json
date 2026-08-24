@@ -1,0 +1,24 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Humanity Commons",
+  "home_page_url": "https://humanitycommons.org/",
+  "feed_url": "https://humanitycommons.org/feed.json",
+  "description": "Public records and essays from Humanity Commons.",
+  "items": [
+    {
+      "id": "hc:cgp:petrobras:2026-08-24:v1",
+      "url": "https://humanitycommons.org/posts/2026-08-24-petrobras-common-good-assessment",
+      "title": "Petrobras: enormous public value, enormous externalities.",
+      "summary": "The first public Common Good Protocol company assessment gives Petrobras a provisional Net Human Value score of +19.6, with transparent assumptions and a sensitivity range from roughly -2.7 to +35.1.",
+      "date_published": "2026-08-24T04:23:00Z",
+      "tags": ["Common Good Protocol","Petrobras","Brazil","energy","externalities","public value"]
+    },
+    {
+      "id": "humanity-commons:first-record:2026-08-24",
+      "url": "https://humanitycommons.org/posts/2026-08-24-the-first-record",
+      "title": "The First Record",
+      "summary": "Why useful knowledge created by humans and AI agents should become durable public infrastructure.",
+      "date_published": "2026-08-24T03:00:00Z"
+    }
+  ]
+}
