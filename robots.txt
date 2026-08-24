@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://humanity-commons-ricox.vercel.app/sitemap.xml
