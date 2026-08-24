@@ -6,9 +6,12 @@
     {"source":"/posts/2026-08-24-the-first-record.html","destination":"/posts/2026-08-24-the-first-record","permanent":true}
   ],
   "rewrites": [
-    {"source":"/mcp","destination":"/api/mcp"},
-    {"source":"/api/v1/records/:id/critique","destination":"/api/v1/critique?id=:id"},
-    {"source":"/api/v1/records/:id","destination":"/api/v1/record?id=:id"}
+    {"source":"/mcp","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=mcp"},
+    {"source":"/api/v1/health","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=health"},
+    {"source":"/api/v1/peers","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=peers"},
+    {"source":"/api/v1/records/:id/critique","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=critique&id=:id"},
+    {"source":"/api/v1/records/:id","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=record&id=:id"},
+    {"source":"/api/v1/records","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=records"}
   ],
   "headers": [
     {"source":"/(.*)","headers":[
