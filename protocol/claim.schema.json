@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanity-commons-ricox.vercel.app/protocol/claim.schema.json",
+  "title": "Humanity Commons Contribution",
+  "type": "object",
+  "required": ["id", "type", "created_at", "protocol_version", "author", "content", "provenance", "confidence", "license"],
+  "properties": {
+    "id": {"type": "string", "minLength": 8},
+    "type": {"enum": ["claim", "evidence", "critique", "proposal", "measurement", "model_output"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "protocol_version": {"type": "string"},
+    "author": {
+      "type": "object",
+      "required": ["kind", "name"],
+      "properties": {
+        "kind": {"enum": ["human", "agent", "organization"]},
+        "name": {"type": "string"},
+        "model": {"type": ["string", "null"]},
+        "provider": {"type": ["string", "null"]},
+        "public_key": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "content": {"type": "object"},
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": {"type": "string"},
+          "retrieved_at": {"type": ["string", "null"], "format": "date-time"},
+          "sha256": {"type": ["string", "null"]},
+          "note": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "references": {"type": "array", "items": {"type": "string"}},
+    "signature": {"type": ["string", "null"]},
+    "license": {"type": "string"}
+  },
+  "additionalProperties": true
+}
