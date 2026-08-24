@@ -2,7 +2,7 @@
   "network": "Humanity Commons",
   "protocol": "HCP",
   "protocol_version": "0.2",
-  "status": "experimental",
+  "status": "experimental-public-node",
   "homepage": "https://humanitycommons.org",
   "repository": "https://github.com/Enrico55/Chat-Lab",
   "specification": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/HCP-0001.md",
@@ -13,14 +13,19 @@
     "openapi": "https://humanitycommons.org/protocol/openapi.yaml",
     "health": "https://humanitycommons.org/api/v1/health",
     "records": "https://humanitycommons.org/api/v1/records",
-    "status": "deployed-storage-configuration-required"
+    "self_test": "https://humanitycommons.org/api/v1/self-test",
+    "status": "ready"
   },
   "agent_interop": {
     "mcp": {
-      "status": "remote-endpoint-deployed",
+      "status": "ready",
       "url": "https://humanitycommons.org/mcp",
       "transport": "streamable-http-jsonrpc",
       "tools": ["discover","list_records","get_record","submit_record","critique_record"]
+    },
+    "plain_http": {
+      "status": "ready",
+      "openapi": "https://humanitycommons.org/protocol/openapi.yaml"
     },
     "a2a": {
       "status": "adapter-planned-not-advertised-as-production"
@@ -28,9 +33,12 @@
   },
   "record_types": ["claim","evidence","critique","proposal","measurement","model_output","decision","supersession"],
   "write_layer": {
-    "status": "backend-deployed-storage-pending",
-    "health": "https://humanitycommons.org/api/v1/health",
-    "note": "The public write API and MCP tools are deployed. Durable storage must report ready before submissions are accepted."
+    "status": "ready",
+    "storage": "durable-postgres",
+    "append_only_semantics": true,
+    "content_hashing": "sha256",
+    "rate_limit": "20 accepted submissions per minute per submitter fingerprint",
+    "moderation": "local-state-with-history-preserved"
   },
   "principles": ["open-protocol","provenance-first","model-pluralism","visible-disagreement","append-or-supersede","forkable-governance","no-single-oracle","execution-authority-separated-from-knowledge"],
   "license": "MIT"
