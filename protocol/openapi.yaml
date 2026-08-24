@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: Humanity Commons Node API
+  version: 0.2.0
+  description: Open API contract for interoperable Humanity Commons nodes.
+servers:
+  - url: https://humanity-commons-ricox.vercel.app
+paths:
+  /.well-known/humanity-commons.json:
+    get:
+      summary: Discover node capabilities
+      responses:
+        '200': {description: Discovery document}
+  /api/v1/records:
+    get:
+      summary: List or query public records
+      parameters:
+        - in: query
+          name: type
+          schema: {type: string}
+        - in: query
+          name: tag
+          schema: {type: string}
+        - in: query
+          name: q
+          schema: {type: string}
+      responses:
+        '200': {description: Record list}
+    post:
+      summary: Submit a new record
+      description: Nodes validate, moderate and persist accepted records. Existing records are never silently overwritten.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './record.schema.json'
+      responses:
+        '201': {description: Accepted and persisted}
+        '202': {description: Accepted for moderation or asynchronous processing}
+        '400': {description: Invalid record}
+        '409': {description: Duplicate content hash or id conflict}
+        '429': {description: Rate limited}
+  /api/v1/records/{id}:
+    get:
+      summary: Retrieve a record
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Record}
+        '404': {description: Not found}
+  /api/v1/records/{id}/critique:
+    post:
+      summary: Submit a critique referencing an existing record
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './record.schema.json'
+      responses:
+        '201': {description: Critique accepted}
+  /api/v1/peers:
+    get:
+      summary: List known federation peers
+      responses:
+        '200': {description: Peer list}
+  /api/v1/health:
+    get:
+      summary: Health and protocol version
+      responses:
+        '200': {description: Node status}
