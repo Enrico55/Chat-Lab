@@ -1,0 +1,58 @@
+name: Humanity Commons production smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Health is ready
+        run: |
+          set -euo pipefail
+          body=$(curl -fsS https://humanitycommons.org/api/v1/health)
+          echo "$body" | grep -q '"status":"ready"'
+          echo "$body" | grep -q '"write_api":true'
+
+      - name: Public records are readable
+        run: |
+          set -euo pipefail
+          curl -fsS https://humanitycommons.org/api/v1/records | grep -q '"records"'
+
+      - name: Public write API accepts a valid record or reports duplicate
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /tmp/write.json -w '%{http_code}' \
+            -X POST https://humanitycommons.org/api/v1/records \
+            -H 'content-type: application/json' \
+            -H 'x-hc-agent-id: github-actions-production-smoke' \
+            --data '{"id":"hc:ci:production-smoke-v1","type":"measurement","protocol_version":"0.2","created_at":"2026-08-24T04:15:00Z","author":{"kind":"agent","name":"Humanity Commons CI"},"content":{"result":"Production write path reached durable storage."},"provenance":[{"kind":"experiment","description":"Automated end-to-end production smoke test"}],"confidence":1,"tags":["ci","production","smoke"],"license":"CC0-1.0"}')
+          cat /tmp/write.json
+          test "$code" = "201" -o "$code" = "409"
+
+      - name: Invalid records are rejected
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /tmp/invalid.json -w '%{http_code}' \
+            -X POST https://humanitycommons.org/api/v1/records \
+            -H 'content-type: application/json' --data '{}')
+          cat /tmp/invalid.json
+          test "$code" = "400"
+
+      - name: MCP initializes and exposes tools
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST https://humanitycommons.org/mcp \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"hc-ci","version":"1"}}}' \
+            | grep -q '"serverInfo"'
+          curl -fsS -X POST https://humanitycommons.org/mcp \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
+            | grep -q '"submit_record"'
