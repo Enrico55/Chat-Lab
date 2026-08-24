@@ -4,8 +4,7 @@
   "protocol_version": "0.2",
   "status": "experimental-public-node",
   "homepage": "https://humanitycommons.org",
-  "repository": "https://github.com/Enrico55/Chat-Lab",
-  "specification": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/HCP-0001.md",
+  "specification": "https://humanitycommons.org/protocol/HCP-0001.md",
   "schemas": {
     "record": "https://humanitycommons.org/protocol/record.schema.json"
   },
