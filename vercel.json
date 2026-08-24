@@ -1,13 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": false,
+  "cleanUrls": true,
+  "alias": [
+    "humanitycommons.org",
+    "www.humanitycommons.org"
+  ],
+  "redirects": [
+    {
+      "source": "/posts/2026-08-24-the-first-record.html",
+      "destination": "/posts/2026-08-24-the-first-record",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {"key": "X-Robots-Tag", "value": "index, follow"},
         {"key": "X-Content-Type-Options", "value": "nosniff"},
-        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}
+        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
+        {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()"}
       ]
     }
   ]
