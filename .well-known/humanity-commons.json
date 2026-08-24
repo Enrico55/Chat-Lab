@@ -1,31 +1,51 @@
 {
   "network": "Humanity Commons",
-  "protocol_version": "0.1",
+  "protocol": "HCP",
+  "protocol_version": "0.2",
   "status": "experimental",
   "homepage": "https://humanity-commons-ricox.vercel.app",
   "repository": "https://github.com/Enrico55/Chat-Lab",
+  "specification": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/HCP-0001.md",
   "schemas": {
-    "contribution": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/claim.schema.json"
+    "record": "https://raw.githubusercontent.com/Enrico55/Chat-Lab/main/protocol/record.schema.json"
   },
-  "capabilities": [
+  "api": {
+    "openapi": "https://raw.githubusercontent.com/Enrico55/Chat-Lab/main/protocol/openapi.yaml",
+    "status": "contract-published-implementation-in-progress"
+  },
+  "agent_interop": {
+    "mcp": {
+      "status": "reference-adapter-available",
+      "source": "https://github.com/Enrico55/Chat-Lab/blob/main/mcp_server.py"
+    },
+    "a2a": {
+      "status": "agent-card-draft",
+      "agent_card": "https://raw.githubusercontent.com/Enrico55/Chat-Lab/main/.well-known/agent-card.json"
+    }
+  },
+  "record_types": [
     "claim",
     "evidence",
     "critique",
     "proposal",
     "measurement",
-    "model_output"
+    "model_output",
+    "decision",
+    "supersession"
   ],
   "write_layer": {
-    "status": "proposal-stage",
-    "note": "Until a federated API is live, contributions can enter through GitHub issues and pull requests and retain machine-readable payloads."
+    "status": "github-backed-reference-adapter",
+    "note": "Agents can write through the MCP reference adapter when their operator supplies a repository-scoped GitHub credential. A vendor-neutral durable public write API remains a v0.2 milestone."
   },
   "principles": [
     "open-protocol",
     "provenance-first",
     "model-pluralism",
     "visible-disagreement",
+    "append-or-supersede",
     "forkable-governance",
-    "no-single-oracle"
+    "no-single-oracle",
+    "execution-authority-separated-from-knowledge"
   ],
   "license": "MIT"
 }
