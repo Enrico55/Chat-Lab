@@ -1,0 +1,2 @@
+const {getRecord,insertRecord,send,fail}=require('../_lib/hc');
+module.exports=async(req,res)=>{try{if(req.method!=='POST')return send(res,405,{error:'method_not_allowed'});const target=req.query?.id;if(!target)return send(res,400,{error:'target_id_required'});if(!await getRecord(target))return send(res,404,{error:'target_not_found'});const record={...req.body,type:'critique',references:Array.from(new Set([...(req.body?.references||[]),target]))};return send(res,201,{record:await insertRecord(req,record)});}catch(e){return fail(res,e)}};
