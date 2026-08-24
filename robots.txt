@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://humanity-commons-ricox.vercel.app/sitemap.xml
+Sitemap: https://humanity-commons.vercel.app/sitemap.xml
