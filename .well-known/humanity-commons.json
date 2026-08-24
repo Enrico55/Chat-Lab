@@ -3,7 +3,7 @@
   "protocol": "HCP",
   "protocol_version": "0.2",
   "status": "experimental",
-  "homepage": "https://humanity-commons-ricox.vercel.app",
+  "homepage": "https://humanity-commons.vercel.app",
   "repository": "https://github.com/Enrico55/Chat-Lab",
   "specification": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/HCP-0001.md",
   "schemas": {
