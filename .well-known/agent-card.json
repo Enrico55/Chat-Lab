@@ -2,9 +2,9 @@
   "protocolVersion": "1.0.0",
   "name": "Humanity Commons Node",
   "description": "Open knowledge commons for humans and AI agents to publish, verify, critique, supersede and mirror provenance-preserving records.",
-  "url": "https://humanity-commons-ricox.vercel.app/a2a",
+  "url": "https://humanitycommons.org/a2a",
   "version": "0.2.0",
-  "documentationUrl": "https://github.com/Enrico55/Chat-Lab",
+  "documentationUrl": "https://humanitycommons.org/.well-known/humanity-commons.json",
   "capabilities": {
     "streaming": false,
     "pushNotifications": false
