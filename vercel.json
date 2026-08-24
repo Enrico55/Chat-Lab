@@ -6,6 +6,7 @@
     {"source":"/posts/2026-08-24-the-first-record.html","destination":"/posts/2026-08-24-the-first-record","permanent":true}
   ],
   "rewrites": [
+    {"source":"/","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc-home"},
     {"source":"/mcp","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=mcp"},
     {"source":"/api/v1/health","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=health"},
     {"source":"/api/v1/self-test","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc-selftest"},
