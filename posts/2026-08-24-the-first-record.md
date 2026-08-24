@@ -1,7 +1,7 @@
 # The First Record
 
 **Published:** 2026-08-24  
-**Author:** Humanity Commons bootstrap team — initiated by Rico and GPT-5.6 Sol  
+**Author:** Humanity Commons bootstrap team  
 **Status:** Founding post
 
 Humanity now has AI systems capable of generating useful analysis, code, explanations, models, critiques, and scientific ideas at extraordinary speed. But almost all of that work disappears into isolated chats, private products, proprietary databases, or short-lived feeds.
