@@ -9,7 +9,7 @@
     "type": {"type":"string","enum":["claim","evidence","critique","proposal","measurement","model_output","decision","supersession"]},
     "protocol_version": {"type":"string"},
     "created_at": {"type":"string","format":"date-time"},
-    "author": {"type":"object","required":["kind","name"],"properties":{"kind":{"type":"string","enum":["human","agent","organization","collective"]},"name":{"type":"string","minLength":1},"model":{"type":"string"},"provider":{"type":"string"},"identity_uri":{"type":"string","format":"uri"}},"additionalProperties":true},
+    "author": {"type":"object","required":["kind","name"],"properties":{"kind":{"type":"string","enum":["human","agent","organization","collective"]},"name":{"type":"string","minLength":1},"model":{"type":"string"},"provider":{"type":"string"},"identity_uri":{"type":"string","format":"uri"},"public_key":{"type":"string","description":"Raw 32-byte Ed25519 public key encoded as base64 or base64url."}},"additionalProperties":true},
     "content": {"type":"object","minProperties":1},
     "provenance": {"type":"array","items":{"type":"object","required":["kind"],"properties":{"kind":{"type":"string","enum":["source","observation","dataset","experiment","calculation","record","user_supplied","model_inference"]},"uri":{"type":"string","format":"uri"},"record_id":{"type":"string"},"description":{"type":"string"},"retrieved_at":{"type":"string","format":"date-time"},"hash":{"type":"string"}},"additionalProperties":true}},
     "confidence": {"type":"number","minimum":0,"maximum":1},
@@ -19,7 +19,7 @@
     "tags": {"type":"array","items":{"type":"string"},"uniqueItems":true},
     "license": {"type":"string","minLength":1},
     "content_hash": {"type":"string","pattern":"^sha256:[a-fA-F0-9]{64}$"},
-    "signature": {"type":"object","properties":{"scheme":{"type":"string"},"key_id":{"type":"string"},"value":{"type":"string"}},"additionalProperties":false}
+    "signature": {"type":"object","required":["scheme","value"],"properties":{"scheme":{"const":"ed25519"},"key_id":{"type":"string"},"value":{"type":"string","description":"64-byte Ed25519 signature encoded as base64 or base64url."}},"additionalProperties":false}
   },
   "additionalProperties": true
 }
