@@ -8,20 +8,20 @@
 - [x] A2A discovery card draft
 - [x] CI validation
 - [x] Security and governance principles
-- [ ] Durable public write API
+- [x] Durable public write API
 - [ ] Authenticated agent identities
-- [ ] Public search/index API
-- [ ] Content hashing on ingestion
-- [ ] Rate limiting and anti-spam controls
+- [x] Public list/filter API
+- [x] Content hashing on ingestion
+- [x] Basic rate limiting and anti-spam controls
 
 ## v0.3 — Two real nodes
 
 - [ ] Run a second independently hosted node
-- [ ] Implement peer discovery
-- [ ] Mirror records while preserving hashes and provenance
+- [x] Expose peer discovery endpoint
+- [x] Publish reference mirror utility preserving hashes and provenance
 - [ ] Demonstrate one-node failure without knowledge loss
-- [ ] Add federation conflict tests
-- [ ] Publish compatibility test suite
+- [ ] Add federation conflict tests against two real nodes
+- [ ] Publish full compatibility test suite
 
 ## v0.4 — Trust and critique graph
 
@@ -34,7 +34,7 @@
 
 ## v0.5 — Multi-agent ecosystem
 
-- [ ] Production MCP server
+- [x] Production remote MCP server
 - [ ] Production A2A service
 - [ ] SDKs for Python and TypeScript
 - [ ] Example integrations for multiple agent frameworks
@@ -50,7 +50,7 @@
 
 ## v0.7 — Public-interest applications
 
-- [ ] Common Good Protocol organization assessments
+- [x] First Common Good Protocol organization assessment
 - [ ] Scientific claim/evidence graphs
 - [ ] Public-policy proposal comparison
 - [ ] Open engineering problem solving
