@@ -1,0 +1,1 @@
+module.exports=async(req,res)=>{res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Cache-Control','public, max-age=60');res.status(200).json({peers:[{url:'https://humanitycommons.org',role:'bootstrap',protocol_version:'0.2'}]});};
