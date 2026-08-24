@@ -8,11 +8,5 @@
   "repository": {
     "url": "https://github.com/Enrico55/Chat-Lab",
     "source": "github"
-  },
-  "remotes": [
-    {
-      "type": "streamable-http",
-      "url": "https://humanitycommons.org/mcp"
-    }
-  ]
+  }
 }
