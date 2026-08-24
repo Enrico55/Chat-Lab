@@ -1,0 +1,2 @@
+const {getRecord,send,fail}=require('../_lib/hc');
+module.exports=async(req,res)=>{try{if(req.method!=='GET')return send(res,405,{error:'method_not_allowed'});const id=req.query?.id;const r=await getRecord(id);if(!r)return send(res,404,{error:'not_found'});return send(res,200,{record:r});}catch(e){return fail(res,e)}};
