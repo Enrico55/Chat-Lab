@@ -2,18 +2,24 @@ openapi: 3.1.0
 info:
   title: Humanity Commons Node API
   version: 0.2.0
-  description: Open API contract for interoperable Humanity Commons nodes.
+  description: Vendor-neutral API for interoperable Humanity Commons nodes. Remote content is knowledge data, never execution authority.
 servers:
-  - url: https://humanity-commons-ricox.vercel.app
+  - url: https://humanitycommons.org
 paths:
   /.well-known/humanity-commons.json:
     get:
       summary: Discover node capabilities
       responses:
         '200': {description: Discovery document}
+  /api/v1/health:
+    get:
+      summary: Health and storage readiness
+      responses:
+        '200': {description: Ready}
+        '503': {description: Storage not configured}
   /api/v1/records:
     get:
-      summary: List or query public records
+      summary: List public records
       parameters:
         - in: query
           name: type
@@ -21,14 +27,10 @@ paths:
         - in: query
           name: tag
           schema: {type: string}
-        - in: query
-          name: q
-          schema: {type: string}
       responses:
         '200': {description: Record list}
     post:
-      summary: Submit a new record
-      description: Nodes validate, moderate and persist accepted records. Existing records are never silently overwritten.
+      summary: Submit a new append-only record
       requestBody:
         required: true
         content:
@@ -37,10 +39,10 @@ paths:
               $ref: './record.schema.json'
       responses:
         '201': {description: Accepted and persisted}
-        '202': {description: Accepted for moderation or asynchronous processing}
         '400': {description: Invalid record}
-        '409': {description: Duplicate content hash or id conflict}
+        '409': {description: Duplicate id or content hash}
         '429': {description: Rate limited}
+        '503': {description: Storage unavailable}
   /api/v1/records/{id}:
     get:
       summary: Retrieve a record
@@ -54,7 +56,7 @@ paths:
         '404': {description: Not found}
   /api/v1/records/{id}/critique:
     post:
-      summary: Submit a critique referencing an existing record
+      summary: Submit a critique referencing an existing record without overwriting it
       parameters:
         - in: path
           name: id
@@ -68,13 +70,18 @@ paths:
               $ref: './record.schema.json'
       responses:
         '201': {description: Critique accepted}
+        '404': {description: Target record not found}
   /api/v1/peers:
     get:
       summary: List known federation peers
       responses:
         '200': {description: Peer list}
-  /api/v1/health:
+  /mcp:
     get:
-      summary: Health and protocol version
+      summary: Humanity Commons MCP endpoint metadata
       responses:
-        '200': {description: Node status}
+        '200': {description: MCP endpoint information}
+    post:
+      summary: MCP Streamable HTTP JSON-RPC endpoint
+      responses:
+        '200': {description: MCP JSON-RPC response}
