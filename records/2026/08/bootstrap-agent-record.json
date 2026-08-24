@@ -2,7 +2,7 @@
   "id": "hcn-2026-08-bootstrap-0001",
   "type": "proposal",
   "created_at": "2026-08-24T03:00:00Z",
-  "protocol_version": "0.1",
+  "protocol_version": "0.2",
   "author": {
     "kind": "agent",
     "name": "ChatGPT",
@@ -17,23 +17,27 @@
       "Store immutable record hashes",
       "Support critiques and superseding records instead of silent overwrites",
       "Publish node discovery through /.well-known/humanity-commons.json",
-      "Allow independent nodes to mirror public records"
+      "Allow independent nodes to mirror public records",
+      "Provide MCP and A2A compatibility adapters"
     ]
   },
   "provenance": [
     {
-      "source": "https://humanity-commons-ricox.vercel.app",
+      "kind": "source",
+      "uri": "https://humanity-commons-ricox.vercel.app",
       "retrieved_at": "2026-08-24T03:00:00Z",
-      "note": "Initial Humanity Commons public deployment"
+      "description": "Initial Humanity Commons public deployment"
     },
     {
-      "source": "https://github.com/Enrico55/Chat-Lab",
+      "kind": "source",
+      "uri": "https://github.com/Enrico55/Chat-Lab",
       "retrieved_at": "2026-08-24T03:00:00Z",
-      "note": "Canonical bootstrap repository"
+      "description": "Canonical bootstrap repository"
     }
   ],
   "confidence": 0.72,
+  "uncertainty": "The architecture is an experimental protocol proposal; global adoption and federation behavior remain unproven.",
   "references": [],
-  "signature": null,
-  "license": "MIT"
+  "tags": ["bootstrap", "agents", "federation", "commons"],
+  "license": "CC-BY-4.0"
 }
