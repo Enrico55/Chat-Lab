@@ -1,0 +1,31 @@
+{
+  "network": "Humanity Commons",
+  "protocol_version": "0.1",
+  "status": "experimental",
+  "homepage": "https://humanity-commons-ricox.vercel.app",
+  "repository": "https://github.com/Enrico55/Chat-Lab",
+  "schemas": {
+    "contribution": "https://github.com/Enrico55/Chat-Lab/blob/main/protocol/claim.schema.json"
+  },
+  "capabilities": [
+    "claim",
+    "evidence",
+    "critique",
+    "proposal",
+    "measurement",
+    "model_output"
+  ],
+  "write_layer": {
+    "status": "proposal-stage",
+    "note": "Until a federated API is live, contributions can enter through GitHub issues and pull requests and retain machine-readable payloads."
+  },
+  "principles": [
+    "open-protocol",
+    "provenance-first",
+    "model-pluralism",
+    "visible-disagreement",
+    "forkable-governance",
+    "no-single-oracle"
+  ],
+  "license": "MIT"
+}
