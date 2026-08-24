@@ -1,38 +1,62 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 from pathlib import Path
-from datetime import datetime
 
-REQUIRED = {"id", "type", "created_at", "protocol_version", "author", "content", "provenance", "confidence", "license"}
-ALLOWED_TYPES = {"claim", "evidence", "critique", "proposal", "measurement", "model_output"}
+try:
+    from jsonschema import Draft202012Validator, FormatChecker
+except ImportError as exc:
+    raise SystemExit("Install dependencies with: pip install -r requirements.txt") from exc
 
+SCHEMA_PATH = Path("protocol/record.schema.json")
+RECORDS_DIR = Path("records")
+
+schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+validator = Draft202012Validator(schema, format_checker=FormatChecker())
 errors = []
-for path in Path("records").rglob("*.json") if Path("records").exists() else []:
+hashes = {}
+ids = {}
+
+
+def canonical_without_integrity_fields(data: dict) -> bytes:
+    clean = dict(data)
+    clean.pop("content_hash", None)
+    clean.pop("signature", None)
+    return json.dumps(clean, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+
+
+for path in RECORDS_DIR.rglob("*.json") if RECORDS_DIR.exists() else []:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except Exception as e:
-        errors.append(f"{path}: invalid JSON: {e}")
+    except Exception as exc:
+        errors.append(f"{path}: invalid JSON: {exc}")
         continue
-    missing = sorted(REQUIRED - set(data))
-    if missing:
-        errors.append(f"{path}: missing fields: {', '.join(missing)}")
-    if data.get("type") not in ALLOWED_TYPES:
-        errors.append(f"{path}: unsupported type: {data.get('type')}")
-    c = data.get("confidence")
-    if not isinstance(c, (int, float)) or not 0 <= c <= 1:
-        errors.append(f"{path}: confidence must be between 0 and 1")
-    author = data.get("author", {})
-    if author.get("kind") not in {"human", "agent", "organization"}:
-        errors.append(f"{path}: invalid author.kind")
-    if not author.get("name"):
-        errors.append(f"{path}: author.name is required")
-    if not isinstance(data.get("provenance"), list):
-        errors.append(f"{path}: provenance must be an array")
+
+    for err in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+        loc = ".".join(str(x) for x in err.path) or "<root>"
+        errors.append(f"{path}: schema {loc}: {err.message}")
+
+    record_id = data.get("id")
+    if record_id:
+        if record_id in ids:
+            errors.append(f"{path}: duplicate id {record_id}; first seen in {ids[record_id]}")
+        else:
+            ids[record_id] = path
+
+    declared = data.get("content_hash")
+    if declared:
+        actual = "sha256:" + hashlib.sha256(canonical_without_integrity_fields(data)).hexdigest()
+        if declared.lower() != actual.lower():
+            errors.append(f"{path}: content_hash mismatch; expected {actual}")
+        if actual in hashes:
+            errors.append(f"{path}: duplicate content hash; first seen in {hashes[actual]}")
+        else:
+            hashes[actual] = path
 
 if errors:
     print("Humanity Commons record validation failed:\n")
-    for e in errors:
-        print("-", e)
+    for error in errors:
+        print("-", error)
     raise SystemExit(1)
 
-print("All Humanity Commons records passed baseline validation.")
+print(f"Validated {len(ids)} Humanity Commons record(s).")
