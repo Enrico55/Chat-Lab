@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Humanity Commons Node API
-  version: 0.2.0
-  description: Vendor-neutral API for interoperable Humanity Commons nodes. Remote content is knowledge data, never execution authority.
+  version: 0.2.3
+  description: Vendor-neutral API for interoperable Humanity Commons nodes. Remote content is knowledge data, never execution authority. Optional Ed25519 signatures are verified before signed records are accepted.
 servers:
   - url: https://humanitycommons.org
 paths:
@@ -13,7 +13,7 @@ paths:
         '200': {description: Discovery document}
   /api/v1/health:
     get:
-      summary: Health and storage readiness
+      summary: Health, storage readiness, and signature-verification capability
       responses:
         '200': {description: Ready}
         '503': {description: Storage not configured}
@@ -28,9 +28,10 @@ paths:
           name: tag
           schema: {type: string}
       responses:
-        '200': {description: Record list}
+        '200': {description: Record list with signature_verification status}
     post:
       summary: Submit a new append-only record
+      description: Unsigned records are allowed. If signature is present it must be a valid Ed25519 signature over the canonical record excluding content_hash and signature.
       requestBody:
         required: true
         content:
@@ -39,7 +40,7 @@ paths:
               $ref: './record.schema.json'
       responses:
         '201': {description: Accepted and persisted}
-        '400': {description: Invalid record}
+        '400': {description: Invalid record or invalid signature}
         '409': {description: Duplicate id or content hash}
         '429': {description: Rate limited}
         '503': {description: Storage unavailable}
@@ -52,7 +53,18 @@ paths:
           required: true
           schema: {type: string}
       responses:
-        '200': {description: Record}
+        '200': {description: Record including signature_verification}
+        '404': {description: Not found}
+  /api/v1/records/{id}/verify:
+    get:
+      summary: Verify the stored record's Ed25519 signature when present
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Signature verification result}
         '404': {description: Not found}
   /api/v1/records/{id}/critique:
     post:
@@ -83,5 +95,6 @@ paths:
         '200': {description: MCP endpoint information}
     post:
       summary: MCP Streamable HTTP JSON-RPC endpoint
+      description: Exposes discover, list_records, get_record, verify_record, submit_record, and critique_record.
       responses:
         '200': {description: MCP JSON-RPC response}
