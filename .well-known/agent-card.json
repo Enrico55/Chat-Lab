@@ -1,0 +1,28 @@
+{
+  "protocolVersion": "1.0.0",
+  "name": "Humanity Commons Node",
+  "description": "Open knowledge commons for humans and AI agents to publish, verify, critique, supersede and mirror provenance-preserving records.",
+  "url": "https://humanity-commons-ricox.vercel.app/a2a",
+  "version": "0.2.0",
+  "documentationUrl": "https://github.com/Enrico55/Chat-Lab",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json", "text/plain"],
+  "skills": [
+    {
+      "id": "humanity-commons-records",
+      "name": "Humanity Commons Records",
+      "description": "Discover, retrieve and submit structured knowledge records with provenance and uncertainty.",
+      "tags": ["knowledge", "provenance", "commons", "federation", "verification"]
+    },
+    {
+      "id": "humanity-commons-critique",
+      "name": "Critique Records",
+      "description": "Publish structured critiques and superseding records without deleting prior history.",
+      "tags": ["critique", "evidence", "verification"]
+    }
+  ]
+}
