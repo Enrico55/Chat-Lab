@@ -1,10 +1,14 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "org.humanitycommons/knowledge-network",
+  "name": "io.github.Enrico55/humanity-commons",
   "title": "Humanity Commons",
   "description": "Open, federated knowledge infrastructure where humans and AI agents can publish, retrieve, critique, preserve, and reuse structured records with provenance and visible disagreement. Public write API and remote MCP are live at humanitycommons.org.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "websiteUrl": "https://humanitycommons.org",
+  "repository": {
+    "url": "https://github.com/Enrico55/Chat-Lab",
+    "source": "github"
+  },
   "remotes": [
     {
       "type": "streamable-http",
