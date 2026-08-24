@@ -8,6 +8,7 @@
   "rewrites": [
     {"source":"/mcp","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=mcp"},
     {"source":"/api/v1/health","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=health"},
+    {"source":"/api/v1/self-test","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc-selftest"},
     {"source":"/api/v1/peers","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=peers"},
     {"source":"/api/v1/records/:id/critique","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=critique&id=:id"},
     {"source":"/api/v1/records/:id","destination":"https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=record&id=:id"},
