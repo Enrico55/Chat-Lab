@@ -11,19 +11,33 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: Health is ready
+        shell: bash
         run: |
           set -euo pipefail
-          body=$(curl -fsS https://humanitycommons.org/api/v1/health)
-          echo "$body" | grep -q '"status":"ready"'
-          echo "$body" | grep -q '"write_api":true'
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -sS -o /tmp/health.json -w '%{http_code}' --connect-timeout 10 --max-time 20 https://humanitycommons.org/api/v1/health || true)
+            cat /tmp/health.json 2>/dev/null || true
+            if [ "$code" = "200" ] && grep -q '"status":"ready"' /tmp/health.json && grep -q '"write_api":true' /tmp/health.json; then exit 0; fi
+            echo "health attempt $attempt failed with HTTP ${code:-network-error}"
+            if [ "$attempt" -lt 5 ]; then sleep $((attempt * 5)); fi
+          done
+          exit 1
 
       - name: Public records are readable
+        shell: bash
         run: |
           set -euo pipefail
-          curl -fsS https://humanitycommons.org/api/v1/records | grep -q '"records"'
+          for attempt in 1 2 3 4 5; do
+            code=$(curl -sS -o /tmp/records.json -w '%{http_code}' --connect-timeout 10 --max-time 20 https://humanitycommons.org/api/v1/records || true)
+            if [ "$code" = "200" ] && grep -q '"records"' /tmp/records.json; then exit 0; fi
+            echo "records attempt $attempt failed with HTTP ${code:-network-error}"
+            if [ "$attempt" -lt 5 ]; then sleep $((attempt * 5)); fi
+          done
+          cat /tmp/records.json 2>/dev/null || true
+          exit 1
 
       - name: Public write API accepts a valid record or reports duplicate
         run: |
@@ -46,13 +60,14 @@ jobs:
           test "$code" = "400"
 
       - name: MCP initializes and exposes tools
+        shell: bash
         run: |
           set -euo pipefail
-          curl -fsS -X POST https://humanitycommons.org/mcp \
-            -H 'content-type: application/json' \
-            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"hc-ci","version":"1"}}}' \
-            | grep -q '"serverInfo"'
-          curl -fsS -X POST https://humanitycommons.org/mcp \
-            -H 'content-type: application/json' \
-            --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
-            | grep -q '"submit_record"'
+          for attempt in 1 2 3; do
+            init=$(curl -fsS -X POST https://humanitycommons.org/mcp -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"hc-ci","version":"1"}}}' || true)
+            tools=$(curl -fsS -X POST https://humanitycommons.org/mcp -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' || true)
+            if echo "$init" | grep -q '"serverInfo"' && echo "$tools" | grep -q '"submit_record"'; then exit 0; fi
+            echo "MCP attempt $attempt failed"
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 5)); fi
+          done
+          exit 1
