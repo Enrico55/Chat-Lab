@@ -17,15 +17,46 @@ permissions:
 jobs:
   mirror-bootstrap-node:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Mirror public records
-        run: node scripts/federation_mirror.mjs https://humanitycommons.org /tmp/hc-mirror
-      - name: Check mirror manifest
+          node-version: '24'
+      - name: Check bootstrap health
+        shell: bash
         run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            echo "Health check attempt ${attempt}/5"
+            status=$(curl -sS -o /tmp/hc-health.json -w '%{http_code}' --connect-timeout 10 --max-time 20 https://humanitycommons.org/api/v1/health || true)
+            if [ "$status" = "200" ]; then
+              cat /tmp/hc-health.json
+              exit 0
+            fi
+            echo "Bootstrap health returned HTTP ${status:-network-error}"
+            if [ "$attempt" -lt 5 ]; then sleep $((attempt * 5)); fi
+          done
+          echo "Bootstrap node remained unavailable after retries"
+          exit 1
+      - name: Mirror public records
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            echo "Mirror attempt ${attempt}/5"
+            rm -rf /tmp/hc-mirror
+            if node scripts/federation_mirror.mjs https://humanitycommons.org /tmp/hc-mirror; then
+              exit 0
+            fi
+            echo "Mirror attempt ${attempt} failed"
+            if [ "$attempt" -lt 5 ]; then sleep $((attempt * 5)); fi
+          done
+          echo "Federation mirror failed after retries"
+          exit 1
+      - name: Check mirror manifest
+        shell: bash
+        run: |
+          set -euo pipefail
           test -s /tmp/hc-mirror/manifest.json
           node -e "const m=require('/tmp/hc-mirror/manifest.json'); if(!m.count) process.exit(1); console.log('mirrored',m.count,'records; conflicts',m.conflicts)"
