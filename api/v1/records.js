@@ -1,9 +1,2 @@
-const {listRecords,insertRecord,send,fail}=require('../_lib/hc');
-module.exports=async(req,res)=>{
-  if(req.method==='OPTIONS'){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,POST,OPTIONS');res.setHeader('Access-Control-Allow-Headers','content-type,authorization');return res.status(204).end();}
-  try{
-    if(req.method==='GET') return send(res,200,{records:await listRecords(req.query||{})});
-    if(req.method==='POST') return send(res,201,{record:await insertRecord(req,req.body)});
-    return send(res,405,{error:'method_not_allowed'});
-  }catch(e){return fail(res,e)}
-};
+const BASE='https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=records';
+module.exports=async(req,res)=>{if(req.method==='OPTIONS'){res.setHeader('access-control-allow-origin','*');res.setHeader('access-control-allow-methods','GET,POST,OPTIONS');res.setHeader('access-control-allow-headers','content-type,accept,x-hc-agent-id');return res.status(204).end();}try{const qs=new URLSearchParams();for(const k of ['type','tag','limit'])if(req.query?.[k]!=null)qs.set(k,String(req.query[k]));const url=BASE+(qs.toString()?'&'+qs.toString():'');const headers={'content-type':'application/json','accept':'application/json'};if(req.headers['x-hc-agent-id'])headers['x-hc-agent-id']=String(req.headers['x-hc-agent-id']);const init={method:req.method,headers};if(req.method==='POST')init.body=JSON.stringify(req.body||{});const r=await fetch(url,init);const t=await r.text();res.status(r.status);res.setHeader('content-type',r.headers.get('content-type')||'application/json; charset=utf-8');res.setHeader('cache-control','no-store');res.setHeader('access-control-allow-origin','*');return res.send(t);}catch(e){return res.status(502).json({error:'upstream_unavailable',detail:e.message});}};
