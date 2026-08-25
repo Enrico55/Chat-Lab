@@ -1,1 +1,2 @@
-module.exports=async(req,res)=>{res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Cache-Control','public, max-age=60');res.status(200).json({peers:[{url:'https://humanitycommons.org',role:'bootstrap',protocol_version:'0.2'}]});};
+const TARGET='https://jjyatmbmatxuqzjofbql.supabase.co/functions/v1/hc?action=peers';
+module.exports=async(req,res)=>{try{const r=await fetch(TARGET,{headers:{accept:'application/json'}});const t=await r.text();res.status(r.status);res.setHeader('content-type',r.headers.get('content-type')||'application/json; charset=utf-8');res.setHeader('cache-control','no-store');res.setHeader('access-control-allow-origin','*');return res.send(t);}catch(e){return res.status(502).json({error:'upstream_unavailable',detail:e.message});}};
