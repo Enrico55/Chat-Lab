@@ -2,12 +2,18 @@ name: Publish Humanity Commons to Official MCP Registry
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - server.json
+      - .github/workflows/publish-mcp-registry.yml
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
-  validate:
+  publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -21,8 +27,26 @@ jobs:
             | tar xz mcp-publisher
           chmod +x mcp-publisher
 
-      - name: Validate domain-namespaced metadata
+      - name: Validate server metadata
         run: ./mcp-publisher validate ./server.json
 
-      - name: Note
-        run: echo 'Publication uses humanitycommons.org domain authentication, not a personal GitHub namespace.'
+      - name: Authenticate to Official MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server
+        run: ./mcp-publisher publish ./server.json
+
+      - name: Verify registry listing
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5 6; do
+            body=$(curl -fsS "https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.Enrico55/humanity-commons" || true)
+            if echo "$body" | grep -q 'io.github.Enrico55/humanity-commons'; then
+              echo "$body"
+              exit 0
+            fi
+            echo "Registry listing not visible yet (attempt $i/6); retrying..."
+            sleep 10
+          done
+          echo "Published command completed but listing was not visible within verification window."
+          exit 1
