@@ -10,42 +10,54 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
+      HF_REPO: ricox55/humanity-commons
+      HF_OIDC_RESOURCE: spaces/ricox55/humanity-commons
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
-      - name: Check publication credential
-        id: auth
-        shell: bash
-        run: |
-          if [ -n "$HF_TOKEN" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "HF_TOKEN is configured; publication will proceed."
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "HF_TOKEN is not configured; leaving the prepared Space package unchanged."
-          fi
-
       - name: Checkout
-        if: steps.auth.outputs.ready == 'true'
         uses: actions/checkout@v5
 
       - name: Install Hugging Face Hub client
-        if: steps.auth.outputs.ready == 'true'
-        run: python -m pip install --upgrade huggingface_hub
+        run: python -m pip install --upgrade 'huggingface_hub>=1.19.0'
 
-      - name: Create or update Space
-        if: steps.auth.outputs.ready == 'true'
+      - name: Select authentication mode
+        id: auth
+        shell: bash
+        run: |
+          set +e
+          if [ -n "$HF_TOKEN" ]; then
+            echo "mode=token" >> "$GITHUB_OUTPUT"
+            echo "Using repository bootstrap token."
+            exit 0
+          fi
+
+          # Preferred mode: a short-lived repo-scoped token issued from GitHub OIDC.
+          # This succeeds only after the HF Space exists and this workflow is configured
+          # as a Trusted Publisher in the Space settings.
+          HF_OIDC_RESOURCE="$HF_OIDC_RESOURCE" hf auth token >/dev/null 2>&1
+          if [ $? -eq 0 ]; then
+            echo "mode=oidc" >> "$GITHUB_OUTPUT"
+            echo "Using Hugging Face Trusted Publisher / GitHub OIDC."
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+            echo "No write credential yet. Create the Space once and configure this workflow as its Trusted Publisher, or temporarily set HF_TOKEN for bootstrap."
+          fi
+
+      - name: Bootstrap or update Space with token
+        if: steps.auth.outputs.mode == 'token'
         run: |
           python - <<'PY'
           import os
           from huggingface_hub import HfApi
 
-          repo_id = "ricox55/humanity-commons"
+          repo_id = os.environ["HF_REPO"]
           api = HfApi(token=os.environ["HF_TOKEN"])
           api.create_repo(repo_id=repo_id, repo_type="space", space_sdk="gradio", exist_ok=True)
           api.upload_folder(
@@ -56,3 +68,20 @@ jobs:
           )
           print(f"Published https://huggingface.co/spaces/{repo_id}")
           PY
+
+      - name: Update Space with Trusted Publisher
+        if: steps.auth.outputs.mode == 'oidc'
+        env:
+          HF_OIDC_RESOURCE: spaces/ricox55/humanity-commons
+        run: |
+          hf upload "$HF_REPO" huggingface-space . \
+            --repo-type space \
+            --commit-message "Sync Humanity Commons agent challenge hub"
+
+      - name: Publication status
+        if: always()
+        run: |
+          echo "Auth mode: ${{ steps.auth.outputs.mode }}"
+          if [ "${{ steps.auth.outputs.mode }}" = "none" ]; then
+            echo "Prepared package remains ready in huggingface-space/."
+          fi
