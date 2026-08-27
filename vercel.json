@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "if [ \"$VERCEL_PROJECT_ID\" = \"prj_iu230d6hPQFFvxmyKtnB4yF7U8Uk\" ]; then echo 'Skipping accidental duplicate chat-lab project'; exit 0; else exit 1; fi",
   "cleanUrls": true,
   "alias": ["humanitycommons.org","www.humanitycommons.org"],
   "redirects": [
