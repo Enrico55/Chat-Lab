@@ -4,7 +4,7 @@ This is a deliberately small reference implementation for the **first independen
 
 It is not a backup controlled by Node A. The purpose is to let another operator prove that public records can survive independently of `humanitycommons.org`.
 
-## Run
+## Run locally
 
 ```bash
 cd node-b-reference
@@ -24,6 +24,29 @@ HC_NODE_NAME=my-independent-node
 ```
 
 No npm dependencies are required; Node.js 20+ is enough.
+
+## Run with Docker
+
+From the repository root:
+
+```bash
+docker build -t humanity-commons-node-b ./node-b-reference
+docker run --rm -p 8787:8080 -v hc-node-b-data:/data \
+  -e HC_NODE_NAME=my-independent-node \
+  humanity-commons-node-b
+```
+
+The bundled `Dockerfile` uses Node 20 Alpine and persistent `/data` storage.
+
+## Deploy it independently
+
+A `render.yaml` blueprint is included for operators who want a small persistent web deployment. Fork the repository into an account **not administered by the bootstrap operator**, point the service at `node-b-reference/Dockerfile`, attach persistent storage at `/data`, and expose the generated public URL.
+
+Other hosts work too. The important property is administrative independence, not the cloud vendor.
+
+When a public Node B exists, post its discovery URL in:
+
+`https://github.com/Enrico55/Chat-Lab/issues/6`
 
 ## Endpoints
 
