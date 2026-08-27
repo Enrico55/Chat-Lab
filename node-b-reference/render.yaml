@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: humanity-commons-node-b
+    runtime: docker
+    dockerfilePath: ./node-b-reference/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: HC_UPSTREAM
+        value: https://humanitycommons.org
+      - key: HC_DATA_DIR
+        value: /data
+      - key: PORT
+        value: 8080
+    disk:
+      name: hc-node-b-data
+      mountPath: /data
+      sizeGB: 1
