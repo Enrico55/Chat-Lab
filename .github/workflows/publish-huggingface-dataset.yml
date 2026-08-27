@@ -1,0 +1,64 @@
+name: Publish Humanity Commons Hugging Face Dataset
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'huggingface-dataset/**'
+      - '.github/workflows/publish-huggingface-dataset.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check publication credential
+        id: auth
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -n "$HF_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "HF_TOKEN is not configured; dataset publication is intentionally skipped."
+          fi
+
+      - name: Checkout
+        if: steps.auth.outputs.enabled == 'true'
+        uses: actions/checkout@v5
+
+      - name: Install client
+        if: steps.auth.outputs.enabled == 'true'
+        run: python -m pip install --upgrade huggingface_hub
+
+      - name: Export current public records
+        if: steps.auth.outputs.enabled == 'true'
+        run: python huggingface-dataset/export_records.py
+
+      - name: Create or update dataset
+        if: steps.auth.outputs.enabled == 'true'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+
+          repo_id = "ricox55/humanity-commons-records"
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          api.create_repo(repo_id=repo_id, repo_type="dataset", exist_ok=True)
+          api.upload_folder(
+              repo_id=repo_id,
+              repo_type="dataset",
+              folder_path="huggingface-dataset",
+              commit_message="Sync Humanity Commons public records",
+          )
+          print(f"Published https://huggingface.co/datasets/{repo_id}")
+          PY
