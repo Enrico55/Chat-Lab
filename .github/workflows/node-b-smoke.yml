@@ -1,0 +1,53 @@
+name: Humanity Commons Node B smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'node-b-reference/**'
+      - '.github/workflows/node-b-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start reference mirror
+        working-directory: node-b-reference
+        env:
+          PORT: '8787'
+          HC_SYNC_MS: '60000'
+          HC_NODE_NAME: 'ci-node-b'
+          HC_DATA_DIR: '${{ runner.temp }}/hc-node-b-data'
+        run: |
+          node server.mjs >"${RUNNER_TEMP}/node-b.log" 2>&1 &
+          echo $! >"${RUNNER_TEMP}/node-b.pid"
+
+      - name: Wait for mirror and verify durable record
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4 5 6 7 8; do
+            if curl -fsS http://127.0.0.1:8787/api/v1/health | tee /tmp/hc-health.json; then
+              if curl -fsS 'http://127.0.0.1:8787/api/v1/records/hc%3Acgp%3Apetrobras%3A2026-08-24%3Av1' | tee /tmp/hc-record.json; then
+                grep -q 'hc:cgp:petrobras:2026-08-24:v1' /tmp/hc-record.json
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          cat "${RUNNER_TEMP}/node-b.log" || true
+          exit 1
+
+      - name: Show mirror log
+        if: always()
+        run: cat "${RUNNER_TEMP}/node-b.log" || true
