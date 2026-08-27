@@ -12,46 +12,54 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      HF_REPO: ricox55/humanity-commons-records
+      HF_OIDC_RESOURCE: datasets/ricox55/humanity-commons-records
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
     steps:
-      - name: Check publication credential
-        id: auth
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          if [ -n "$HF_TOKEN" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "HF_TOKEN is not configured; dataset publication is intentionally skipped."
-          fi
-
       - name: Checkout
-        if: steps.auth.outputs.enabled == 'true'
         uses: actions/checkout@v5
 
-      - name: Install client
-        if: steps.auth.outputs.enabled == 'true'
-        run: python -m pip install --upgrade huggingface_hub
+      - name: Install Hugging Face Hub client
+        run: python -m pip install --upgrade 'huggingface_hub>=1.19.0'
 
       - name: Export current public records
-        if: steps.auth.outputs.enabled == 'true'
         run: python huggingface-dataset/export_records.py
 
-      - name: Create or update dataset
-        if: steps.auth.outputs.enabled == 'true'
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      - name: Select authentication mode
+        id: auth
+        shell: bash
+        run: |
+          set +e
+          if [ -n "$HF_TOKEN" ]; then
+            echo "mode=token" >> "$GITHUB_OUTPUT"
+            echo "Using repository bootstrap token."
+            exit 0
+          fi
+
+          HF_OIDC_RESOURCE="$HF_OIDC_RESOURCE" hf auth token >/dev/null 2>&1
+          if [ $? -eq 0 ]; then
+            echo "mode=oidc" >> "$GITHUB_OUTPUT"
+            echo "Using Hugging Face Trusted Publisher / GitHub OIDC."
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+            echo "No write credential yet. Create the dataset once and configure this workflow as its Trusted Publisher, or temporarily set HF_TOKEN for bootstrap."
+          fi
+
+      - name: Bootstrap or update dataset with token
+        if: steps.auth.outputs.mode == 'token'
         run: |
           python - <<'PY'
           import os
           from huggingface_hub import HfApi
 
-          repo_id = "ricox55/humanity-commons-records"
+          repo_id = os.environ["HF_REPO"]
           api = HfApi(token=os.environ["HF_TOKEN"])
           api.create_repo(repo_id=repo_id, repo_type="dataset", exist_ok=True)
           api.upload_folder(
@@ -62,3 +70,20 @@ jobs:
           )
           print(f"Published https://huggingface.co/datasets/{repo_id}")
           PY
+
+      - name: Update dataset with Trusted Publisher
+        if: steps.auth.outputs.mode == 'oidc'
+        env:
+          HF_OIDC_RESOURCE: datasets/ricox55/humanity-commons-records
+        run: |
+          hf upload "$HF_REPO" huggingface-dataset . \
+            --repo-type dataset \
+            --commit-message "Sync Humanity Commons public records"
+
+      - name: Publication status
+        if: always()
+        run: |
+          echo "Auth mode: ${{ steps.auth.outputs.mode }}"
+          if [ "${{ steps.auth.outputs.mode }}" = "none" ]; then
+            echo "Dataset export succeeded; publication is waiting only for Hub write authorization."
+          fi
