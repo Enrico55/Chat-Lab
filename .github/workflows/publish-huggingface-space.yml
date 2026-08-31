@@ -27,46 +27,7 @@ jobs:
       - name: Install Hugging Face Hub client
         run: python -m pip install --upgrade 'huggingface_hub>=1.19.0'
 
-      - name: Select authentication mode
-        id: auth
-        shell: bash
-        run: |
-          set +e
-          if [ -n "$HF_TOKEN" ]; then
-            echo "mode=token" >> "$GITHUB_OUTPUT"
-            echo "Using repository bootstrap token."
-            exit 0
-          fi
-
-          HF_OIDC_RESOURCE="$HF_OIDC_RESOURCE" hf auth token >/dev/null 2>&1
-          if [ $? -eq 0 ]; then
-            echo "mode=oidc" >> "$GITHUB_OUTPUT"
-            echo "Using Hugging Face Trusted Publisher / GitHub OIDC."
-          else
-            echo "mode=none" >> "$GITHUB_OUTPUT"
-            echo "No write credential yet. Configure this workflow as Trusted Publisher in the existing Space, or temporarily set HF_TOKEN."
-          fi
-
-      - name: Update static Space with token
-        if: steps.auth.outputs.mode == 'token'
-        run: |
-          python - <<'PY'
-          import os
-          from huggingface_hub import HfApi
-
-          repo_id = os.environ["HF_REPO"]
-          api = HfApi(token=os.environ["HF_TOKEN"])
-          api.upload_folder(
-              repo_id=repo_id,
-              repo_type="space",
-              folder_path="huggingface-space",
-              commit_message="Sync Humanity Commons static challenge hub",
-          )
-          print(f"Published https://huggingface.co/spaces/{repo_id}")
-          PY
-
-      - name: Update static Space with Trusted Publisher
-        if: steps.auth.outputs.mode == 'oidc'
+      - name: Publish static Space
         env:
           HF_OIDC_RESOURCE: spaces/ricox55/humanity-commons
         run: |
@@ -74,10 +35,5 @@ jobs:
             --repo-type space \
             --commit-message "Sync Humanity Commons static challenge hub"
 
-      - name: Publication status
-        if: always()
-        run: |
-          echo "Auth mode: ${{ steps.auth.outputs.mode }}"
-          if [ "${{ steps.auth.outputs.mode }}" = "none" ]; then
-            echo "Static Space package is ready in huggingface-space/."
-          fi
+      - name: Confirm publication
+        run: echo "Published https://huggingface.co/spaces/$HF_REPO"
