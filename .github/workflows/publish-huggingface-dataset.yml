@@ -32,47 +32,7 @@ jobs:
       - name: Export current public records
         run: python huggingface-dataset/export_records.py
 
-      - name: Select authentication mode
-        id: auth
-        shell: bash
-        run: |
-          set +e
-          if [ -n "$HF_TOKEN" ]; then
-            echo "mode=token" >> "$GITHUB_OUTPUT"
-            echo "Using repository bootstrap token."
-            exit 0
-          fi
-
-          HF_OIDC_RESOURCE="$HF_OIDC_RESOURCE" hf auth token >/dev/null 2>&1
-          if [ $? -eq 0 ]; then
-            echo "mode=oidc" >> "$GITHUB_OUTPUT"
-            echo "Using Hugging Face Trusted Publisher / GitHub OIDC."
-          else
-            echo "mode=none" >> "$GITHUB_OUTPUT"
-            echo "No write credential yet. Create the dataset once and configure this workflow as its Trusted Publisher, or temporarily set HF_TOKEN for bootstrap."
-          fi
-
-      - name: Bootstrap or update dataset with token
-        if: steps.auth.outputs.mode == 'token'
-        run: |
-          python - <<'PY'
-          import os
-          from huggingface_hub import HfApi
-
-          repo_id = os.environ["HF_REPO"]
-          api = HfApi(token=os.environ["HF_TOKEN"])
-          api.create_repo(repo_id=repo_id, repo_type="dataset", exist_ok=True)
-          api.upload_folder(
-              repo_id=repo_id,
-              repo_type="dataset",
-              folder_path="huggingface-dataset",
-              commit_message="Sync Humanity Commons public records",
-          )
-          print(f"Published https://huggingface.co/datasets/{repo_id}")
-          PY
-
-      - name: Update dataset with Trusted Publisher
-        if: steps.auth.outputs.mode == 'oidc'
+      - name: Publish dataset snapshot
         env:
           HF_OIDC_RESOURCE: datasets/ricox55/humanity-commons-records
         run: |
@@ -80,10 +40,5 @@ jobs:
             --repo-type dataset \
             --commit-message "Sync Humanity Commons public records"
 
-      - name: Publication status
-        if: always()
-        run: |
-          echo "Auth mode: ${{ steps.auth.outputs.mode }}"
-          if [ "${{ steps.auth.outputs.mode }}" = "none" ]; then
-            echo "Dataset export succeeded; publication is waiting only for Hub write authorization."
-          fi
+      - name: Confirm publication
+        run: echo "Published https://huggingface.co/datasets/$HF_REPO"
