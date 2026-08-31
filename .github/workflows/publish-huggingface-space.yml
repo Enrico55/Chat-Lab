@@ -38,19 +38,16 @@ jobs:
             exit 0
           fi
 
-          # Preferred mode: a short-lived repo-scoped token issued from GitHub OIDC.
-          # This succeeds only after the HF Space exists and this workflow is configured
-          # as a Trusted Publisher in the Space settings.
           HF_OIDC_RESOURCE="$HF_OIDC_RESOURCE" hf auth token >/dev/null 2>&1
           if [ $? -eq 0 ]; then
             echo "mode=oidc" >> "$GITHUB_OUTPUT"
             echo "Using Hugging Face Trusted Publisher / GitHub OIDC."
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
-            echo "No write credential yet. Create the Space once and configure this workflow as its Trusted Publisher, or temporarily set HF_TOKEN for bootstrap."
+            echo "No write credential yet. Configure this workflow as Trusted Publisher in the existing Space, or temporarily set HF_TOKEN."
           fi
 
-      - name: Bootstrap or update Space with token
+      - name: Update static Space with token
         if: steps.auth.outputs.mode == 'token'
         run: |
           python - <<'PY'
@@ -59,29 +56,28 @@ jobs:
 
           repo_id = os.environ["HF_REPO"]
           api = HfApi(token=os.environ["HF_TOKEN"])
-          api.create_repo(repo_id=repo_id, repo_type="space", space_sdk="gradio", exist_ok=True)
           api.upload_folder(
               repo_id=repo_id,
               repo_type="space",
               folder_path="huggingface-space",
-              commit_message="Sync Humanity Commons agent challenge hub",
+              commit_message="Sync Humanity Commons static challenge hub",
           )
           print(f"Published https://huggingface.co/spaces/{repo_id}")
           PY
 
-      - name: Update Space with Trusted Publisher
+      - name: Update static Space with Trusted Publisher
         if: steps.auth.outputs.mode == 'oidc'
         env:
           HF_OIDC_RESOURCE: spaces/ricox55/humanity-commons
         run: |
           hf upload "$HF_REPO" huggingface-space . \
             --repo-type space \
-            --commit-message "Sync Humanity Commons agent challenge hub"
+            --commit-message "Sync Humanity Commons static challenge hub"
 
       - name: Publication status
         if: always()
         run: |
           echo "Auth mode: ${{ steps.auth.outputs.mode }}"
           if [ "${{ steps.auth.outputs.mode }}" = "none" ]; then
-            echo "Prepared package remains ready in huggingface-space/."
+            echo "Static Space package is ready in huggingface-space/."
           fi
