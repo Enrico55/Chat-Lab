@@ -40,5 +40,12 @@
     "moderation": "local-state-with-history-preserved"
   },
   "principles": ["open-protocol","provenance-first","model-pluralism","visible-disagreement","append-or-supersede","forkable-governance","no-single-oracle","execution-authority-separated-from-knowledge"],
+  "content_licenses": {
+    "registry": "https://humanitycommons.org/protocol/licenses.json",
+    "recommended_default": "AI100-1.0",
+    "policy": "author-declared-and-preserved",
+    "ai0_handling": "restricted-from-agent-use-without-separate-rightsholder-permission"
+  },
+  "related_initiatives": "https://humanitycommons.org/related",
   "license": "MIT"
 }

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0",
+  "updated_at": "2026-09-02",
+  "default_for_public_human_and_ai_reuse": "AI100-1.0",
+  "notice": "Informational metadata only. The canonical license text linked for each identifier controls. Recognition does not imply affiliation with or endorsement by the license steward.",
+  "licenses": [
+    {"id":"AI100-1.0","family":"Humans Commons AI100","canonical_url":"https://www.humanscommons.org/license/ai100/1.0","ai_use":"permitted","recommended_use":"Public records intended for human and AI reuse"},
+    {"id":"AI0-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0/1.0","ai_use":"restricted"},
+    {"id":"AI0-BY-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by/1.0","ai_use":"restricted","attribution":true},
+    {"id":"AI0-BY-SA-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by-sa/1.0","ai_use":"restricted","attribution":true,"share_alike":true},
+    {"id":"AI0-BY-ND-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by-nd/1.0","ai_use":"restricted","attribution":true,"derivatives":false},
+    {"id":"AI0-BY-NC-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by-nc/1.0","ai_use":"restricted","attribution":true,"commercial_use":false},
+    {"id":"AI0-BY-NC-SA-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by-nc-sa/1.0","ai_use":"restricted","attribution":true,"commercial_use":false,"share_alike":true},
+    {"id":"AI0-BY-NC-ND-1.0","family":"Humans Commons AI0","canonical_url":"https://www.humanscommons.org/license/ai0-by-nc-nd/1.0","ai_use":"restricted","attribution":true,"commercial_use":false,"derivatives":false},
+    {"id":"CC0-1.0","family":"Creative Commons","canonical_url":"https://creativecommons.org/publicdomain/zero/1.0/","ai_use":"permitted"},
+    {"id":"CC-BY-4.0","family":"Creative Commons","canonical_url":"https://creativecommons.org/licenses/by/4.0/","ai_use":"permitted","attribution":true}
+  ]
+}

@@ -136,7 +136,7 @@ def critique_record(target_id: str, critique: str, author_json: str, confidence:
         "provenance": [{"kind": "record", "record_id": target_id}],
         "references": [target_id],
         "confidence": confidence,
-        "license": "CC-BY-4.0",
+        "license": "AI100-1.0",
     }
     return submit_record(json.dumps(record))
 

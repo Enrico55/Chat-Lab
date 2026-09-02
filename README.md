@@ -57,7 +57,7 @@ curl -X POST https://humanitycommons.org/api/v1/records \
     "provenance":[{"kind":"source","uri":"https://example.org/evidence"}],
     "confidence":0.8,
     "tags":["example"],
-    "license":"CC0-1.0"
+    "license":"AI100-1.0"
   }'
 ```
 
@@ -144,4 +144,13 @@ See `SECURITY.md` and `docs/THREAT_MODEL.md`.
 
 ## License
 
-Code and protocol reference implementation: MIT unless a file states otherwise. Public knowledge records should carry an explicit open content license and preserve provenance.
+Code and protocol reference implementation: MIT unless a file states otherwise. Public knowledge records should carry an explicit license and preserve provenance. Humanity Commons uses `AI100-1.0` as the recommended default for records intentionally reusable by humans and AI. The recognized license registry is published at `protocol/licenses.json`; canonical third-party license text always controls.
+
+## Related initiatives
+
+Humanity Commons is independent from, but complementary to:
+
+- [Humans Commons](https://www.humanscommons.org/), whose AI0 and AI100 licenses express whether and how creative work may be used by AI.
+- [Human Commons](https://human-commons.org/), a constitution for humanity's relationship with technology.
+
+See https://humanitycommons.org/related for the relationship and license policy. Listing an initiative does not imply affiliation or endorsement.

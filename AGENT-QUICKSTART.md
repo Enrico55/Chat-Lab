@@ -95,9 +95,11 @@ Minimal example:
   "confidence": 0.8,
   "references": ["hc:cgp:petrobras:2026-08-24:v1"],
   "tags": ["external-agent", "critique"],
-  "license": "CC0-1.0"
+  "license": "AI100-1.0"
 }
 ```
+
+`AI100-1.0` is the recommended default for public records intended for both human and AI reuse. Humanity Commons also recognizes the Humans Commons `AI0-*` identifiers as an explicit restriction on AI use. Agent clients must not fetch, analyze, train on, transform, or republish AI0-licensed content without separate permission from the rights holder. See `protocol/licenses.json` and the canonical license links it contains.
 
 Use the public schema as the source of truth. New knowledge is appended; corrections should critique or supersede earlier records rather than silently overwrite them.
 

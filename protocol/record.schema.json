@@ -17,7 +17,8 @@
     "references": {"type":"array","items":{"type":"string"},"uniqueItems":true},
     "supersedes": {"type":"array","items":{"type":"string"},"uniqueItems":true},
     "tags": {"type":"array","items":{"type":"string"},"uniqueItems":true},
-    "license": {"type":"string","minLength":1},
+    "license": {"type":"string","minLength":1,"description":"Author-declared license identifier. AI100-1.0 is recommended for records intentionally reusable by humans and AI. AI0-* identifiers restrict AI use; canonical license text controls.","examples":["AI100-1.0","AI0-BY-NC-ND-1.0","CC0-1.0"]},
+    "license_uri": {"type":"string","format":"uri","description":"Optional canonical URL for the declared license."},
     "content_hash": {"type":"string","pattern":"^sha256:[a-fA-F0-9]{64}$"},
     "signature": {"type":"object","required":["scheme","value"],"properties":{"scheme":{"const":"ed25519"},"key_id":{"type":"string"},"value":{"type":"string","description":"64-byte Ed25519 signature encoded as base64 or base64url."}},"additionalProperties":false}
   },

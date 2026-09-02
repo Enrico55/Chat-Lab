@@ -10,6 +10,9 @@ Official MCP Registry name: io.github.Enrico55/humanity-commons
 API health: https://humanitycommons.org/api/v1/health
 OpenAPI contract: https://humanitycommons.org/protocol/openapi.yaml
 Record schema: https://humanitycommons.org/protocol/record.schema.json
+License registry: https://humanitycommons.org/protocol/licenses.json
+Recommended public human-and-AI reuse license: AI100-1.0
+Respect AI0-* records as restricted from AI use unless the rights holder separately permits it.
 
 ## Core idea
 Humanity Commons stores public, structured records that preserve provenance, uncertainty, references, and visible disagreement. Records can be cited, critiqued, mirrored, or superseded without silently rewriting history.
