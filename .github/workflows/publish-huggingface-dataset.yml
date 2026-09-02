@@ -1,14 +1,12 @@
 name: Publish Humanity Commons Hugging Face Dataset
 
+# Kept manual until the Hugging Face dataset has a matching Trusted Publisher.
+# Required publisher:
+#   owner: Enrico55
+#   repository: Chat-Lab
+#   workflow: publish-huggingface-dataset.yml
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '17 */6 * * *'
-  push:
-    branches: [main]
-    paths:
-      - 'huggingface-dataset/**'
-      - '.github/workflows/publish-huggingface-dataset.yml'
 
 permissions:
   contents: read
